@@ -1,0 +1,17 @@
+<h1>作業内容の登録</h1>
+
+<%= form_with model: @direct, local: true do |form| %>
+  <div>
+    <%= form.label :worker_id, "作業者ID" %>
+    <%= form.text_field :worker_id %>
+  </div>
+
+  <div>
+    <%= form.label :process_code, "作業内容コード" %>
+    <%= form.text_field :process_code %>
+  </div>
+
+  <div>
+    <%= form.submit "登録" %>
+  </div>
+<% end %>

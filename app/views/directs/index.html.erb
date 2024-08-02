@@ -1,0 +1,13 @@
+<h1>作業状況一覧</h1>
+
+<h2>現在の作業者</h2>
+<ul>
+  <% @directs.where(end_time: nil).each do |direct| %>
+    <li><%= direct.worker_id %> - <%= direct.process_code %></li>
+  <% end %>
+</ul>
+
+<h2>累計作業時間</h2>
+<% @directs.group(:process_code).sum("TIMESTAMPDIFF(HOUR, start_time, end_time)").each do |process_code, hours| %>
+  <p><%= process_code %>: <%= hours %>時間</p>
+<% end %>
