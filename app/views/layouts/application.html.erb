@@ -1,16 +1,41 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>OperationManagement</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<head>
+  <title>Operation Management</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-  </head>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+  <%= stylesheet_link_tag 'custom', media: 'all', 'data-turbo-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbo-track': 'reload', defer: true %>
+</head>
+<body>
+  <div class="header">
+    <h1>Operation Management</h1>
+    <nav>
+      <%= link_to "間接登録", new_direct_path %>
+      <%= link_to "作業状況", directs_path %>
+    </nav>
+  </div>
 
-  <body>
+  <div class="container">
+    <% if flash[:notice] %>
+      <div class="flash-notice">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <% if flash[:alert] %>
+      <div class="flash-alert">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
     <%= yield %>
-  </body>
+  </div>
+
+  <div class="footer">
+    <p>Power vacances!!</p>
+  </div>
+</body>
 </html>

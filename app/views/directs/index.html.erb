@@ -1,13 +1,73 @@
-<h1>作業状況一覧</h1>
+<div class="section-container">
+  <div class="section-block">
+    <h2>Ops状況</h2>
+    <div class="ops-status-container">
+      <% if @directs.present? %>
+        <% @directs.group_by(&:process_code).each do |process_code, directs| %>
+          <div class="process-block">
+            <h3><%= process_code %></h3>
+            <ul>
+              <% directs.each do |direct| %>
+                <% if direct.end_time.nil? %> <!-- 作業が終了していない場合 -->
+                  <li>バッジID: <%= direct.worker_id %></li>
+                <% end %>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      <% else %>
+        <p>現在進行中の作業はありません。</p>
+      <% end %>
+    </div>
+  </div>
 
-<h2>現在の作業者</h2>
-<ul>
-  <% @directs.where(end_time: nil).each do |direct| %>
-    <li><%= direct.worker_id %> - <%= direct.process_code %></li>
-  <% end %>
-</ul>
+  <div class="section-block">
+    <h2>Act_LH</h2>
+    <div class="filter-form">
+      <%= form_with url: directs_path, method: :get, local: true do |form| %>
+        <div>
+          <%= form.label :start_date, "開始日" %>
+          <%= form.date_field :start_date, value: params[:start_date] %>
+        </div>
+        <div>
+          <%= form.label :end_date, "終了日" %>
+          <%= form.date_field :end_date, value: params[:end_date] %>
+        </div>
+        <div>
+          <%= form.label :start_time, "開始時刻" %>
+          <%= form.time_field :start_time, value: params[:start_time] %>
+        </div>
+        <div>
+          <%= form.label :end_time, "終了時刻" %>
+          <%= form.time_field :end_time, value: params[:end_time] %>
+        </div>
+        <div>
+          <%= form.submit "フィルター" %>
+        </div>
+      <% end %>
+    </div>
 
-<h2>累計作業時間</h2>
-<% @directs.group(:process_code).sum("TIMESTAMPDIFF(HOUR, start_time, end_time)").each do |process_code, hours| %>
-  <p><%= process_code %>: <%= hours %>時間</p>
-<% end %>
+    <table class="cumulative-time-table">
+      <thead>
+        <tr>
+          <th>間接コード</th>
+          <th>累計時間（時間）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @filtered_directs.present? %>
+          <% @filtered_directs.group(:process_code).sum('TIMESTAMPDIFF(SECOND, start_time, end_time) / 3600.0').each do |process_code, hours| %>
+            <tr>
+              <td><%= process_code %></td>
+              <td><%= '%.2f' % hours %>時間</td> <!-- 小数点2桁まで表示 -->
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="2">指定された期間内にデータがありません。</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
